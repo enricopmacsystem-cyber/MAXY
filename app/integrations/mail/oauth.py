@@ -90,7 +90,7 @@ def exchange_code(
     with httpx.Client(timeout=30.0) as client:
         response = client.post(token_url, data=data)
     if response.status_code >= 400:
-        raise MailError(f"Scambio token OAuth fallito: {response.text[:300]}")
+        raise MailError("Scambio token OAuth fallito. Verificare la configurazione del provider.")
     return response.json()
 
 
@@ -124,7 +124,7 @@ def refresh_access_token(
     with httpx.Client(timeout=30.0) as client:
         response = client.post(token_url, data=data)
     if response.status_code >= 400:
-        raise MailError(f"Rinnovo token OAuth fallito: {response.text[:300]}")
+        raise MailError("Rinnovo token OAuth fallito. Verificare la configurazione del provider.")
     return response.json()
 
 

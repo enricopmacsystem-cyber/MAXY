@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 
-from app.api.dependencies import DbSession
+from app.api.dependencies import AdminUser, DbSession, audit_action
 from app.core.exceptions import OrderImportError, ProductNotFoundError
 from app.core.logging import get_logger
 from app.schemas.recommendation import (
@@ -17,6 +17,7 @@ logger = get_logger(__name__)
 @router.post("/import", response_model=RecommendationImportResult)
 async def import_order_history(
     db: DbSession,
+    user: AdminUser,
     file: UploadFile = File(..., description="File Excel (.xlsx) storico ordini"),
     recompute: bool = Query(default=True, description="Ricalcola raccomandazioni dopo import"),
 ) -> RecommendationImportResult:
@@ -31,13 +32,15 @@ async def import_order_history(
     try:
         from io import BytesIO
 
-        return service.import_orders_from_excel(BytesIO(content), recompute=recompute)
+        result = service.import_orders_from_excel(BytesIO(content), recompute=recompute)
     except OrderImportError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    audit_action(db, user, action="recommendations.import", details={"recompute": recompute})
+    return result
 
 
 @router.post("/recompute", response_model=RecomputeResult)
-def recompute_recommendations(db: DbSession) -> RecomputeResult:
+def recompute_recommendations(db: DbSession, user: AdminUser) -> RecomputeResult:
     """Ricalcola co-occorrenze e correlazioni dallo storico ordini."""
     service = RecommendationService(db)
     result = service.recompute_recommendations()
@@ -45,6 +48,15 @@ def recompute_recommendations(db: DbSession) -> RecomputeResult:
         "Ricalcolo via API: %d prodotti, %d coppie",
         result.products_with_stats,
         result.cooccurrence_pairs,
+    )
+    audit_action(
+        db,
+        user,
+        action="recommendations.recompute",
+        details={
+            "products_with_stats": result.products_with_stats,
+            "cooccurrence_pairs": result.cooccurrence_pairs,
+        },
     )
     return result
 

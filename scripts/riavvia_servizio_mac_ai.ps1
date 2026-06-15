@@ -34,7 +34,7 @@ Start-Sleep -Seconds 6
 
 try {
     $health = Invoke-RestMethod "http://127.0.0.1:$port/api/health" -TimeoutSec 5
-    Write-Host "Servizio OK - EasyOne:" $health.easyone_api_url
+    Write-Host "Servizio OK - EasyOne configurato:" $health.easyone_configured
 } catch {
     Write-Host "Servizio non risponde. Verificare PostgreSQL."
     exit 1

@@ -74,7 +74,7 @@ class CommercialCopilotService:
 
     def analyze(self, request: CommercialCopilotRequest) -> CommercialCopilotResponse:
         query = request.query.strip()
-        logger.info("Commercial Copilot avviato per: %s", query)
+        logger.debug("Commercial Copilot avviato per: %s", query)
 
         try:
             bundle = self.easyone.resolve_product_query(query)

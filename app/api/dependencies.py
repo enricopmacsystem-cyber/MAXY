@@ -111,6 +111,7 @@ ProductsReadUser = Annotated[
 AdminSyncUser = Annotated[
     AuthenticatedUser | None, Depends(optional_scope(Scope.ADMIN_SYNC))
 ]
+AdminUser = Annotated[AuthenticatedUser, Depends(require_scope(Scope.ADMIN_SYNC))]
 MailUser = Annotated[AuthenticatedUser | None, Depends(optional_scope(Scope.MAIL_ACCESS))]
 CalendarUser = Annotated[
     AuthenticatedUser | None, Depends(optional_scope(Scope.CALENDAR_READ))

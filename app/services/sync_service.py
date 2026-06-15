@@ -270,7 +270,7 @@ class SyncService:
 
         }
 
-        logger.info("Sync EasyOne completa: %s", result)
+        logger.info("Sync EasyOne completa: status=%s ordini=%s", result.get("status"), result.get("orders_imported"))
 
         return result
 

@@ -32,6 +32,11 @@ async def lifespan(_: FastAPI):
                 api_url,
             )
 
+    if settings.jwt_secret_key == "change-me-in-production-mac-ai-assistant":
+        logger.warning(
+            "JWT_SECRET_KEY non configurato: impostare un valore randomico in hub.env"
+        )
+
     import threading
 
     threading.Thread(

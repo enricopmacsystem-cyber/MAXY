@@ -85,7 +85,7 @@ class CommercialAssistantService:
         if not question:
             raise RAGError("La domanda non può essere vuota")
 
-        logger.info("Assistente commerciale — nuova domanda: %s", question[:200])
+        logger.debug("Assistente commerciale — nuova domanda: %s", question[:200])
 
         context = self._gather_context(question, source_file, top_k)
 

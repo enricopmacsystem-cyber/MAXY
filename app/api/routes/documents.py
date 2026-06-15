@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 
-from app.api.dependencies import AiChatUser, DbSession, ProductsReadUser, audit_action
+from app.api.dependencies import AdminUser, AiChatUser, DbSession, ProductsReadUser, audit_action
 from app.core.exceptions import ChatCompletionError
 from app.schemas.document import (
     DocumentSearchResponse,
@@ -40,7 +40,7 @@ def search_documents(
 def import_folder(
     payload: ImportFolderRequest,
     db: DbSession,
-    user: ProductsReadUser = None,
+    user: AdminUser,
 ) -> ImportFolderResponse:
     service = DocumentIngestionService(db)
     try:
@@ -49,15 +49,16 @@ def import_folder(
             recursive=payload.recursive,
             index_pdfs=payload.index_pdfs,
         )
+    except PermissionError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
     except (FileNotFoundError, NotADirectoryError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    if user:
-        audit_action(
-            db,
-            user,
-            action="documents.import_folder",
-            details={"folder": payload.folder_path, "imported": result.get("imported", 0)},
-        )
+    audit_action(
+        db,
+        user,
+        action="documents.import_folder",
+        details={"folder": payload.folder_path, "imported": result.get("imported", 0)},
+    )
     return ImportFolderResponse(**result)
 
 

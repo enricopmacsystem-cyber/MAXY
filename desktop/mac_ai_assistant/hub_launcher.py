@@ -121,11 +121,7 @@ def _hub_easyone_ok(base_url: str) -> bool:
         return False
     if health.get("easyone_mock"):
         return False
-    api_url = (health.get("easyone_api_url") or "").strip()
-    if not api_url:
-        return False
-    lowered = api_url.lower()
-    return "macsystem" in lowered and not _is_mock_easyone_url(api_url)
+    return bool(health.get("easyone_configured"))
 
 
 def _postgres_port_open(port: int = _POSTGRES_PORT) -> bool:

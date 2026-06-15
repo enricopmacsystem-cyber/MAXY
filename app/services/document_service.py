@@ -18,6 +18,7 @@ from app.schemas.document import (
     WebDocumentResult,
     WebDocumentSearchResponse,
 )
+from app.utils.document_paths import is_allowed_document_path
 
 
 class DocumentService:
@@ -91,7 +92,10 @@ class DocumentService:
         if not doc:
             return None
         if doc.file_path and Path(doc.file_path).exists():
-            return doc.file_path
+            file_path = Path(doc.file_path)
+            if is_allowed_document_path(file_path, self.settings):
+                return doc.file_path
+            return doc.file_url
         return doc.file_url
 
     def _sync_product_documents(self, internal_code: str | None) -> None:

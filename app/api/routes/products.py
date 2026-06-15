@@ -1,6 +1,6 @@
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 
-from app.api.dependencies import DbSession
+from app.api.dependencies import AdminUser, DbSession, audit_action
 from app.core.exceptions import (
     CompatibilityError,
     ProductImportError,
@@ -110,10 +110,11 @@ def add_compatibility_link(
     internal_code: str,
     payload: CompatibilityLinkCreate,
     db: DbSession,
+    user: AdminUser,
 ) -> CompatibilityLinkResponse:
     service = CompatibilityService(db)
     try:
-        return service.add_compatibility_link(
+        link = service.add_compatibility_link(
             product_code=internal_code,
             related_code=payload.related_internal_code,
             compatibility_type=payload.compatibility_type,
@@ -124,10 +125,18 @@ def add_compatibility_link(
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except CompatibilityError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    audit_action(
+        db,
+        user,
+        action="products.compatibility.add",
+        entity_id=internal_code,
+        details={"related": payload.related_internal_code},
+    )
+    return link
 
 
 @router.post("", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
-def create_product(payload: ProductCreate, db: DbSession) -> ProductResponse:
+def create_product(payload: ProductCreate, db: DbSession, user: AdminUser) -> ProductResponse:
     service = ProductService(db)
     data = payload.model_dump(mode="python")
     data["manual_url"] = str(data["manual_url"]) if data.get("manual_url") else None
@@ -138,6 +147,7 @@ def create_product(payload: ProductCreate, db: DbSession) -> ProductResponse:
         product = service.create_product(data)
     except ProductImportError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+    audit_action(db, user, action="products.create", entity_id=product.internal_code)
     return _to_product_response(product)
 
 
@@ -146,6 +156,7 @@ def update_product(
     internal_code: str,
     payload: ProductUpdate,
     db: DbSession,
+    user: AdminUser,
 ) -> ProductResponse:
     service = ProductService(db)
     data = payload.model_dump(exclude_unset=True, mode="python")
@@ -157,12 +168,14 @@ def update_product(
         product = service.update_product(internal_code, data)
     except ProductNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    audit_action(db, user, action="products.update", entity_id=internal_code)
     return _to_product_response(product)
 
 
 @router.post("/import", response_model=ProductImportResult)
 async def import_products(
     db: DbSession,
+    user: AdminUser,
     file: UploadFile = File(..., description="File Excel (.xlsx)"),
 ) -> ProductImportResult:
     if not file.filename or not file.filename.lower().endswith(".xlsx"):
@@ -188,5 +201,11 @@ async def import_products(
         "Import via API completato: importati=%d, aggiornati=%d",
         result.imported,
         result.updated,
+    )
+    audit_action(
+        db,
+        user,
+        action="products.import",
+        details={"imported": result.imported, "updated": result.updated},
     )
     return result

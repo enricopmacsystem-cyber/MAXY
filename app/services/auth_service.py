@@ -15,6 +15,7 @@ from app.core.security import (
     generate_refresh_token,
     hash_token,
 )
+from app.core.secrets_at_rest import decrypt_at_rest, encrypt_at_rest
 from app.integrations.easyone.auth_client import get_easyone_auth_client
 from app.repositories.audit_repo import AuditRepository
 from app.repositories.session_repo import SessionRepository
@@ -78,7 +79,7 @@ class AuthService:
             token_hash=hash_token(access_token),
             refresh_token_hash=hash_token(refresh_token),
             expires_at=session_expires,
-            easyone_access_token=profile.easyone_access_token,
+            easyone_access_token=encrypt_at_rest(profile.easyone_access_token),
         )
 
         self.audit_repo.log(
@@ -186,9 +187,9 @@ class AuthService:
             user_id=str(payload["sub"]),
             username=str(payload.get("username", "")),
             display_name=user_session.display_name or str(payload.get("username", "")),
-            roles=list(payload.get("roles", [])),
-            permissions=list(payload.get("permissions", [])),
-            easyone_access_token=user_session.easyone_access_token,
+            roles=list(user_session.roles_json or []),
+            permissions=list(user_session.permissions_json or []),
+            easyone_access_token=decrypt_at_rest(user_session.easyone_access_token),
         )
 
     def get_session_info(self, access_token: str) -> SessionInfo:

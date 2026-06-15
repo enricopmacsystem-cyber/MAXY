@@ -89,19 +89,10 @@ class DevEasyOneAuthClient(EasyOneAuthClient):
         users: dict[str, dict] = {}
 
         if not raw.strip():
-
-            users["admin"] = {
-
-                "password": "admin",
-
-                "display_name": "Amministratore Dev",
-
-                "roles": ["admin"],
-
-                "permissions": sorted(ALL_SCOPES),
-
-            }
-
+            logger.warning(
+                "DEV_AUTH_USERS non configurato: nessun utente dev disponibile. "
+                "Formato: user:password[:display_name[:role1,role2]]"
+            )
             return users
 
 
@@ -298,6 +289,16 @@ class HttpEasyOneAuthClient(EasyOneAuthClient):
 
 
 
+class UnconfiguredEasyOneAuthClient(EasyOneAuthClient):
+    """Fallback sicuro quando EASYONE_BASE_URL manca e la modalità dev non è attiva."""
+
+    def authenticate(self, username: str, password: str) -> EasyOneUserProfile:
+        raise AuthenticationError(
+            "EasyOne CRM non configurato: impostare EASYONE_BASE_URL in hub.env "
+            "oppure EASYONE_AUTH_MODE=dev con DEV_AUTH_USERS per sviluppo locale."
+        )
+
+
 def get_easyone_auth_client(settings: Settings | None = None) -> EasyOneAuthClient:
 
     settings = settings or get_settings()
@@ -312,12 +313,14 @@ def get_easyone_auth_client(settings: Settings | None = None) -> EasyOneAuthClie
 
         return DevEasyOneAuthClient(settings)
 
-    logger.warning(
+    logger.error(
 
-        "EASYONE_BASE_URL non configurato: impossibile usare credenziali EasyOne CRM reali"
+        "EASYONE_BASE_URL non configurato e EASYONE_AUTH_MODE=%s: login disabilitato",
+
+        settings.easyone_auth_mode,
 
     )
 
-    return DevEasyOneAuthClient(settings)
+    return UnconfiguredEasyOneAuthClient()
 
 

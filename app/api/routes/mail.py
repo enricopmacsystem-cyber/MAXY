@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import uuid
+from html import escape
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
-from app.api.dependencies import DbSession, MailUser, audit_action
+from app.api.dependencies import CurrentUser, DbSession, MailUser, audit_action
 from app.core.exceptions import MailError
 from app.schemas.mail import (
     MailAccountResponse,
@@ -32,6 +33,13 @@ _OAUTH_SUCCESS_HTML = """
 </body>
 </html>
 """
+
+
+def _oauth_error_html(title: str, message: str) -> HTMLResponse:
+    return HTMLResponse(
+        f"<h3>{escape(title)}</h3><p>{escape(message)}</p>",
+        status_code=400,
+    )
 
 
 @router.get("/status", response_model=MailProviderStatus)
@@ -74,7 +82,12 @@ def start_mail_oauth(
 
 
 @router.get("/oauth/status/{state}", response_model=MailOAuthStatusResponse)
-def mail_oauth_status(state: str, db: DbSession) -> MailOAuthStatusResponse:
+def mail_oauth_status(state: str, db: DbSession, user: CurrentUser) -> MailOAuthStatusResponse:
+    from app.integrations.mail.oauth_state import get_pending
+
+    entry = get_pending(state)
+    if entry and entry.easyone_user_id != user.user_id:
+        raise HTTPException(status_code=403, detail="Sessione OAuth non autorizzata")
     return MailService(db).oauth_status(state)
 
 
@@ -91,16 +104,13 @@ def mail_oauth_callback(
         from app.integrations.mail.oauth_state import mark_error
 
         mark_error(state, error_description or error)
-        return HTMLResponse(
-            f"<h3>Accesso annullato</h3><p>{error_description or error}</p>",
-            status_code=400,
-        )
+        return _oauth_error_html("Accesso annullato", error_description or error or "Annullato")
     try:
         email = service.complete_oauth(code=code, state=state)
     except MailError as exc:
-        return HTMLResponse(f"<h3>Errore collegamento</h3><p>{exc}</p>", status_code=400)
+        return _oauth_error_html("Errore collegamento", str(exc))
     return HTMLResponse(
-        _OAUTH_SUCCESS_HTML.replace("collegato", f"collegato ({email})"),
+        _OAUTH_SUCCESS_HTML.replace("collegato", f"collegato ({escape(email)})"),
         status_code=200,
     )
 

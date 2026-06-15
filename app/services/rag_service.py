@@ -58,7 +58,7 @@ class RAGService:
         if not question:
             raise RAGError("La domanda non può essere vuota")
 
-        logger.info("Nuova domanda RAG: %s", question[:200])
+        logger.debug("Nuova domanda RAG: %s", question[:200])
 
         if not self.retriever:
             raise RAGError(

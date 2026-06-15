@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.config.settings import Settings, get_settings
 from app.core.exceptions import MailError
+from app.core.secrets_at_rest import decrypt_at_rest, encrypt_at_rest
 from app.integrations.mail import gmail_client, outlook_client
 from app.integrations.mail.oauth import (
     GMAIL_SCOPES,
@@ -105,8 +106,8 @@ class MailService:
                 easyone_user_id=pending.easyone_user_id,
                 provider=pending.provider,
                 email_address=email,
-                access_token=access_token,
-                refresh_token=str(refresh_token) if refresh_token else None,
+                access_token=encrypt_at_rest(access_token) or access_token,
+                refresh_token=encrypt_at_rest(str(refresh_token)) if refresh_token else None,
                 token_expires_at=expires,
                 scopes=scopes,
             )
@@ -181,25 +182,27 @@ class MailService:
         return account
 
     def _ensure_access_token(self, account: MailOAuthAccount) -> str:
+        access_token = decrypt_at_rest(account.access_token) or ""
+        refresh_token = decrypt_at_rest(account.refresh_token)
         expires = account.token_expires_at
         if expires and expires > datetime.now(UTC) + timedelta(minutes=2):
-            return account.access_token
-        if not account.refresh_token:
-            return account.access_token
+            return access_token
+        if not refresh_token:
+            return access_token
         payload = refresh_access_token(
             self.settings,
             provider=account.provider,
-            refresh_token=account.refresh_token,
+            refresh_token=refresh_token,
         )
-        access_token = str(payload.get("access_token", ""))
-        if not access_token:
+        new_access = str(payload.get("access_token", ""))
+        if not new_access:
             raise MailError("Impossibile rinnovare l'accesso alla casella posta.")
-        refresh_token = payload.get("refresh_token")
+        new_refresh = payload.get("refresh_token")
         self.repo.update_tokens(
             account,
-            access_token=access_token,
-            refresh_token=str(refresh_token) if refresh_token else None,
+            access_token=encrypt_at_rest(new_access) or new_access,
+            refresh_token=encrypt_at_rest(str(new_refresh)) if new_refresh else None,
             token_expires_at=token_expires_at(payload),
         )
         self.session.commit()
-        return access_token
+        return new_access

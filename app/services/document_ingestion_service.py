@@ -11,6 +11,7 @@ from app.ingestion.chunker import chunk_pages
 from app.integrations.gemini.embeddings import EmbeddingService
 from app.integrations.qdrant.indexer import QdrantIndexer
 from app.repositories.document_repo import DocumentRepository
+from app.utils.document_paths import is_allowed_document_path, resolve_allowed_folder
 from app.utils.pdf_parser import extract_text_from_pdf
 
 logger = get_logger(__name__)
@@ -32,11 +33,7 @@ class DocumentIngestionService:
         recursive: bool = True,
         index_pdfs: bool = True,
     ) -> dict:
-        root = Path(folder_path.strip().strip('"'))
-        if not root.exists():
-            raise FileNotFoundError(f"Percorso non trovato: {root}")
-        if not root.is_dir():
-            raise NotADirectoryError(f"Non è una cartella: {root}")
+        root = resolve_allowed_folder(folder_path, self.settings)
 
         pattern = "**/*" if recursive else "*"
         files = [
@@ -51,6 +48,9 @@ class DocumentIngestionService:
 
         for file_path in files:
             try:
+                if not is_allowed_document_path(file_path, self.settings):
+                    errors.append(f"{file_path.name}: percorso non consentito")
+                    continue
                 code_match = _CODE_IN_NAME.search(file_path.stem)
                 internal_code = code_match.group(1) if code_match else None
                 doc_type = "manual" if "man" in file_path.stem.lower() else "datasheet"

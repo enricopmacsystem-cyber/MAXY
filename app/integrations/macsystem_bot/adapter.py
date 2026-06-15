@@ -44,8 +44,6 @@ def _manual_roots(settings: Settings) -> list[Path]:
 
 
 def _configure_process_env(settings: Settings) -> None:
-    if settings.anthropic_api_key:
-        os.environ["ANTHROPIC_KEY"] = settings.anthropic_api_key
     if settings.chroma_dir:
         os.environ["CHROMA_DIR"] = str(settings.chroma_dir)
     roots = _manual_roots(settings)
