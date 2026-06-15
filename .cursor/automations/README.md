@@ -179,3 +179,5 @@ Report: `dist/pipeline-reports/`
 
 Ultimo test E2E: push su `main` per verificare trigger **Code review** e **Security audit**.
 Controlla esito in Cursor Automations → Run History.
+
+**Test #2** — dopo fix GitHub App Cursor (permessi repo salvati).
