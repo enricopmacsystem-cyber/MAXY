@@ -22,6 +22,6 @@ if ($SkipInstaller) { $args += "--skip-installer" }
 if ($RequireAgentApproval) { $args += "--require-agent-approval" }
 if ($NoAgentPrompts) { $args += "--no-agent-prompts" }
 
-Write-Host "=== Maxy AI — Production Pipeline ===" -ForegroundColor Cyan
+Write-Host "=== Maxy AI - Production Pipeline ===" -ForegroundColor Cyan
 & python @args
 exit $LASTEXITCODE

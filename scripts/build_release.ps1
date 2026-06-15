@@ -1,4 +1,4 @@
-# MAC AI Assistant — Build release Windows (PowerShell)
+# MAC AI Assistant - Build release Windows (PowerShell)
 # Uso: .\scripts\build_release.ps1
 #      .\scripts\build_release.ps1 -Clean -SkipInstaller
 
@@ -12,7 +12,7 @@ $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
 
-Write-Host "=== MAC AI Assistant — Build Release Windows ===" -ForegroundColor Cyan
+Write-Host "=== MAC AI Assistant - Build Release Windows ===" -ForegroundColor Cyan
 
 # Verifica Python
 $python = Get-Command python -ErrorAction SilentlyContinue

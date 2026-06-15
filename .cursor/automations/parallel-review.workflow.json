@@ -1,27 +1,32 @@
 {
-  "name": "Maxy — Review parallela (push)",
-  "description": "Su modifiche al codice: code-review e security in parallelo, scope disgiunti.",
+  "name": "Maxy - Review parallela (GitHub)",
+  "description": "Due automazioni separate consigliate: code-review + security su push o PR.",
   "workflow": {
     "triggers": [
       {
-        "type": "git_push"
+        "type": "github_push_to_branch",
+        "repository": "enricopmacsystem-cyber/MAXY",
+        "branch": "main",
+        "comment": "Cursor UI: GitHub -> Push to branch -> main. Alternativa: Pull request opened"
       }
     ],
-    "actions": [
+    "automations": [
       {
-        "type": "agent",
-        "description": "Code review — desktop e scripts",
-        "prompt": "Usa maxy-code-review sul diff dell'ultimo push. Scope: desktop/mac_ai_assistant/, scripts/. Solo report, nessuna modifica. Formato skill completo."
+        "name": "Maxy - Code review on push",
+        "model": "claude-sonnet",
+        "memoryEnabled": false,
+        "promptFile": ".cursor/automations/prompts/code-review-on-push.md"
       },
       {
-        "type": "agent",
-        "description": "Security — app e integrazioni",
-        "prompt": "Usa maxy-security sul diff dell'ultimo push. Scope: app/api/, app/services/, app/integrations/, desktop/mac_ai_assistant/api/. Solo report. Formato skill completo."
+        "name": "Maxy - Security on push",
+        "model": "claude-opus",
+        "memoryEnabled": false,
+        "promptFile": ".cursor/automations/prompts/security-on-push.md"
       }
     ],
     "gitConfig": {
-      "repositoryPath": "c:\\MAXY"
-    },
-    "memoryEnabled": false
+      "repository": "enricopmacsystem-cyber/MAXY",
+      "branch": "main"
+    }
   }
 }
