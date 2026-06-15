@@ -1,0 +1,51 @@
+MAXY AI — CONFIGURAZIONE POSTGRESQL (OBBLIGATORIO)
+==================================================
+
+Maxy AI usa un database PostgreSQL locale sul PC per catalogo, clienti e sessioni.
+
+REQUISITO
+---------
+PostgreSQL 14 o superiore in ascolto su localhost porta 5432.
+
+INSTALLAZIONE (prima volta)
+---------------------------
+OPZIONE A — Durante l'installazione di Maxy AI
+  Se PostgreSQL non è presente, l'installer propone di installare PostgreSQL 18
+  automaticamente (password predefinita: admin, allineata a hub.env).
+
+OPZIONE B — Manuale
+1. Scaricare PostgreSQL per Windows:
+   https://www.postgresql.org/download/windows/
+
+2. Durante l'installazione:
+   - Porta: 5432 (predefinita)
+   - Utente: postgres
+   - Scegliere una password e annotarla
+
+3. Aprire il file (con Blocco note):
+   %APPDATA%\MAC AI Assistant\hub.env
+
+4. Aggiornare la riga DATABASE_URL con la password scelta, esempio:
+   DATABASE_URL=postgresql+psycopg2://postgres:LA_TUA_PASSWORD@localhost:5432/tech_assistant
+
+5. Riavviare Maxy AI (o reinstallare): il database verrà creato automaticamente.
+
+SERVIZIO WINDOWS
+----------------
+Il servizio si chiama in genere postgresql-x64-16 (o simile).
+Pannello di controllo → Strumenti di amministrazione → Servizi → avviare PostgreSQL.
+
+In PowerShell (amministratore):
+  Get-Service *postgres* | Start-Service
+
+PROBLEMI COMUNI
+---------------
+- "Connection refused" → PostgreSQL non installato o servizio fermo
+- "password authentication failed" → password errata in hub.env
+- Dopo aver corretto hub.env, eliminare il file:
+  %APPDATA%\MAC AI Assistant\db_init_pending.flag
+  e riaprire Maxy AI.
+
+SUPPORTO
+--------
+MacSystem s.r.l. — Andrea Santin

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mac System</string>
+    <string name="app_version_label">2.0.2 — Dandelion</string>
+    <string name="developer_name">Andrea Santin</string>
+    <string name="organization_name">MacSystem s.r.l.</string>
+    <string name="developer_email">andrea.santin@macsystem.it</string>
+</resources>

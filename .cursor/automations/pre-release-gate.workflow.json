@@ -1,0 +1,27 @@
+{
+  "name": "Maxy — Pre-release gate",
+  "description": "Preflight + security scan + prompt review paralleli prima del build.",
+  "workflow": {
+    "triggers": [
+      {
+        "type": "manual"
+      }
+    ],
+    "actions": [
+      {
+        "type": "run_script",
+        "description": "Esegui gate automatici",
+        "command": "python scripts/run_production_pipeline.py --phase preflight,security,review"
+      },
+      {
+        "type": "agent",
+        "description": "Verifica report e coordina review parallela",
+        "prompt": "Usa la skill maxy-pipeline. Leggi l'ultimo report in dist/pipeline-reports/*.json. Se PASS su preflight e security, indica all'utente di aprire in parallelo agent_prompt_review.md e agent_prompt_security.md. Non avviare release finché entrambi i verdetti non sono OK. Se FAIL, elenca fix minimi per skill maxy-implement."
+      }
+    ],
+    "gitConfig": {
+      "repositoryPath": "c:\\MAXY"
+    },
+    "memoryEnabled": true
+  }
+}

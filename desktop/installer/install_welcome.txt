@@ -1,0 +1,6 @@
+Benvenuto nell'installazione di Maxy 2.0 - daisy.
+
+Azienda: MacSystem s.r.l.
+Sviluppatore: Andrea Santin
+
+L'applicazione integra EasyOne, magazzino, clienti e l'assistente commerciale Maxy AI sul tuo PC.

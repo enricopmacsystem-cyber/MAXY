@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mac_gray">#6B6B6B</color>
+    <color name="mac_navy">#1B3A5C</color>
+    <color name="mac_blue">#224FA8</color>
+    <color name="mac_blue_light">#598BEC</color>
+    <color name="mac_background">#F7F8FA</color>
+    <color name="mac_surface">#FFFFFF</color>
+    <color name="mac_text_primary">#272833</color>
+    <color name="mac_text_secondary">#67678C</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
+</resources>

@@ -1,0 +1,38 @@
+.env
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.log
+.pytest_cache/
+.mypy_cache/
+.idea/
+.vscode/
+
+# Build artifacts (PyInstaller, Android, ecc.)
+build/
+desktop/build/
+desktop/dist/
+dist/
+android/.sdk-tmp/
+android/app/build/
+android/.gradle/
+android/cmdline-tools.zip
+
+# Firmware Dahua (ricerca locale — scaricare/ricreare in locale)
+firmware_extracted/
+firmware_work/
+
+# Config runtime con segreti (hub usa %APPDATA%\MAC AI Assistant\hub.env)
+hub.env
+**/hub.env
+
+# Dati PostgreSQL locali (docker volume bind)
+postgres_data/
+
+# Binari grandi — copiati automaticamente da scripts/build_release.py (ensure_software_assets)
+desktop/resources/software/*.exe
+desktop/resources/software/*.apk
+
+desktop/version_info.txt
+desktop/installer/Output/

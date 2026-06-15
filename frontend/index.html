@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAC AI ASSISTANT</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+  <div id="login-overlay" class="login-overlay hidden">
+    <div class="login-card">
+      <h2>MAC AI ASSISTANT</h2>
+      <p>Accedi con le credenziali EasyOne</p>
+      <form id="login-form">
+        <label for="login-username">Utente EasyOne</label>
+        <input id="login-username" type="text" autocomplete="username" required />
+
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" required />
+
+        <p id="login-error" class="login-error hidden"></p>
+        <button type="submit">Accedi</button>
+      </form>
+      <p class="login-hint">Dev: admin / admin</p>
+    </div>
+  </div>
+
+  <div id="app-shell" class="layout hidden">
+    <header>
+      <div class="header-row">
+        <div>
+          <h1>MAC AI ASSISTANT</h1>
+          <p>Catalogo, disponibilità, documentazione, compatibilità e suggerimenti.</p>
+        </div>
+        <div class="user-bar">
+          <span id="user-label"></span>
+          <button type="button" id="logout-btn" class="secondary-btn">Esci</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="chat-panel">
+        <div id="messages" aria-live="polite"></div>
+
+        <form id="chat-form">
+          <label for="question">Domanda</label>
+          <textarea
+            id="question"
+            rows="3"
+            placeholder="Es. RT-AX58U disponibilità e accessori compatibili?"
+            required
+          ></textarea>
+
+          <label for="source-file">Filtra PDF (opzionale)</label>
+          <input
+            id="source-file"
+            type="text"
+            placeholder="manuale-router-x.pdf"
+          />
+
+          <button type="submit" id="send-btn">Invia</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>

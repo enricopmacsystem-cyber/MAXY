@@ -1,0 +1,15 @@
+---
+description: Contesto base progetto Maxy AI per tutte le sessioni
+alwaysApply: true
+---
+
+# Maxy AI — contesto
+
+Monorepo: Hub FastAPI (`app/`) + desktop PySide6 (`desktop/`).
+
+- Config runtime: `%APPDATA%\MAC AI Assistant\hub.env` e `config.ini`
+- Assistente: modalità **commercial** (Gemini) e **technical** (ChromaDB + Claude)
+- Build produzione: `python scripts/build_release.py`
+- Non committare segreti né `hub.env` con chiavi reali
+- UI e messaggi utente in **italiano**
+- Preferire diff minimi; riusare pattern esistenti nel file/modulo

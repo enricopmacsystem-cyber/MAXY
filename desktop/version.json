@@ -1,0 +1,15 @@
+{
+  "name": "Maxy AI",
+  "product_title": "Maxy 2.0 - daisy",
+  "version": "2.0",
+  "version_label": "v.2.0 beta",
+  "build_name": "daisy",
+  "developer": "Andrea Santin",
+  "build": 15,
+  "publisher": "MacSystem s.r.l.",
+  "copyright": "Copyright (C) 2026 MacSystem s.r.l. — Andrea Santin",
+  "description": "Maxy AI — assistente commerciale EasyOne e supporto tecnico manuali",
+  "hub_default_url": "http://127.0.0.1:8000",
+  "app_id": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+  "update_url": "https://updates.macsystem.local/mac-ai-assistant/manifest.json"
+}

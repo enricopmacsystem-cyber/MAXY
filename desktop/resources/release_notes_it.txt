@@ -1,0 +1,259 @@
+================================================================================
+  MAXY AI — RELEASE INFO
+  Versione: v.2.0 beta  |  Build: daisy (15)
+  MacSystem s.r.l. — Sviluppatore: Andrea Santin
+================================================================================
+
+Questo documento elenca le principali funzioni, correzioni e implementazioni
+della versione corrente, con una breve spiegazione del motivo per cui sono
+state introdotte.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (15)
+--------------------------------------------------------------------------------
+
+CORREZIONE AVVIO HUB
+  • Fix PyInstaller: modulo `pydoc` incluso nel bundle Hub (richiesto da NLTK /
+    sentence-transformers). Risolve errore «No module named pydoc» all’installazione.
+    Perché: l’exe MAC_AI_Hub.exe non partiva dopo l’installer build 14.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (14)
+--------------------------------------------------------------------------------
+
+SUPPORTO TECNICO INTEGRATO (NOVITÀ build 14)
+  • Tab Maxy con due modalità a pulsante: «Commerciale / magazzino» e
+    «Supporto tecnico · manuali» (sostituisce il menu a tendina).
+    Perché: rendere immediata la scelta tra assistente commerciale e bot manuali.
+
+  • Motore tecnico Mac System (ChromaDB + Claude) integrato nell’Hub locale:
+    ricerca su manuali Dahua, RISCO, ELMO, NOTIFIER, ESSER con fonti PDF.
+    Perché: unificare in Maxy AI il bot Telegram già usato dai tecnici Mac System.
+
+  • Percorsi rete predefiniti per manuali e datasheet (\\172.17.17.11\…)
+    e indice ChromaDB locale (C:\macsystem\chroma_db).
+    Perché: riutilizzare l’archivio documentale aziendale già indicizzato.
+
+  • Caricamento datasheet in parallelo, cache PDF e warmup all’avvio Hub.
+    Perché: ridurre i tempi di risposta senza sacrificare l’accuratezza.
+
+  • Richieste tecniche in background: l’interfaccia non si blocca durante
+    l’attesa (timeout esteso a 5 minuti per domande sui manuali).
+    Perché: evitare «Non risponde» di Windows su query lunghe.
+
+  • Testo interfaccia più leggibile (font 12–15pt nel tab Maxy).
+    Perché: migliorare la fruibilità delle risposte lunghe.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (1–13)
+--------------------------------------------------------------------------------
+
+REBRAND E IDENTITÀ
+  • Nome applicazione aggiornato a «Maxy AI v.2.0 beta».
+    Perché: allineare il prodotto al assistente Maxy e segnalare la nuova
+    generazione del software rispetto alla precedente «MAC AI Assistant 1.0».
+
+  • Splash screen con mascotte Maxy su sfondo bianco ad alta risoluzione.
+    Perché: sostituire il vecchio quadrato nero generico con un’immagine
+    professionale e riconoscibile all’avvio.
+
+  • Splash post-login con logo nitido e indicatore di caricamento circolare.
+    Perché: dare feedback visivo durante il caricamento dell’interfaccia dopo
+    l’accesso EasyOne, evitando la sensazione che il programma sia bloccato.
+
+  • Schermata About con versione, build, sviluppatore, email di contatto
+    (andrea.santin@macsystem.it) e verifica aggiornamenti.
+    Perché: centralizzare le informazioni di supporto e permettere di controllare
+    se è installata l’ultima versione disponibile.
+
+  • Easter egg sulla build «daisy»: triplo clic → margherita interattiva.
+    Perché: elemento ludico legato al nome interno della build.
+
+
+INTEGRAZIONE EASYONE E DATI LOCALI
+  • Sincronizzazione completa con EasyOne: articoli, giacenze, clienti, ordini.
+    Perché: avere un archivio locale persistente utilizzabile anche dopo il
+    riavvio, senza dover rifare ogni volta le ricerche sul CRM.
+
+  • Scheda Clienti dedicata con elenco persistente e colonne anagrafiche reali.
+    Perché: la vecchia scheda mostrava colonne numerate senza dati utili.
+
+  • Popup cliente (doppio clic): telefono in evidenza, indirizzo completo,
+    apertura Google Maps nel browser di sistema.
+    Perché: consultare rapidamente contatti e posizione del cliente senza uscire
+    dal flusso di lavoro (mappa integrata rimossa per alleggerire l’installer).
+
+  • Migrazione database indirizzi clienti (via, CAP, provincia, coordinate).
+    Perché: importare da EasyOne i dati necessari per mappe e schede cliente.
+
+
+ASSISTENTE MAXY E SESSIONE
+  • Rinnovo automatico del token di sessione e ripristino al riavvio.
+    Perché: risolvere l’errore «Token non valido o scaduto» dopo circa 30 minuti
+    o al riuso dell’applicazione senza dover rifare il login ogni volta.
+
+  • Re-login silenzioso con credenziali salvate se il refresh fallisce.
+    Perché: continuità d’uso per chi ha attivato «Ricorda credenziali».
+
+
+CRUSCOTTO E RICERCA WEB
+  • Nuova scheda Cruscotto con ricerca Qwant separata dalle altre funzioni.
+    Perché: offrire un motore di ricerca web indipendente dal catalogo e da Maxy.
+
+  • Risultati Qwant nel browser di Windows con pannello di stato nell’app.
+    Perché: garantire stabilità e ridurre drasticamente la dimensione
+    dell’installazione (rimosso il browser Chromium integrato ~250 MB).
+
+
+ALTRI MODULI
+  • Analytics: analisi acquisti per cliente con breakdown per brand e
+    suggerimenti commerciali Maxy.
+    Perché: supportare le decisioni di vendita con dati storici e AI.
+
+  • Documenti: ricerca in archivio, import da cartelle locali/rete, ricerca web.
+    Perché: centralizzare manuali e schede tecniche oltre al catalogo.
+
+  • Posta: pulsanti Gmail (rosso) e Outlook (blu) con OAuth configurabile.
+    Perché: rendere evidente e utilizzabile l’integrazione posta nel cruscotto.
+
+  • Calendario: collegamento Outlook ed EasyOne con pulsanti attivi.
+    Perché: unificare gli impegni commerciali in un’unica vista.
+
+  • Calendario, WhatsApp, Preventivi, Magazzino, Catalogo, Maxy chat commerciale.
+    Perché: coprire il flusso operativo quotidiano del distributore tecnologico.
+
+
+STABILITÀ E PERFORMANCE
+  • Installazione alleggerita: da ~500 MB a ~255 MB installati (~82 MB installer).
+    Perché: rimuovere Qt WebEngine e componenti Qt non necessari, migliorando
+    tempi di download, installazione e affidabilità all’avvio.
+
+  • Caricamento clienti posticipato dopo l’apertura finestra principale.
+    Perché: mantenere fluida l’animazione dello splash post-login.
+
+  • Log di crash in %APPDATA%\MAC AI Assistant\logs.
+    Perché: diagnosticare eventuali errori in produzione.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (6)
+--------------------------------------------------------------------------------
+
+  • Ripristinato splash post-login con immagine Maxy e barra di caricamento.
+    Perché: lo script di pulizia della build eliminava per errore la cartella
+    resources dell’app (splash e changelog).
+
+  • Ricerca Qwant nel Cruscotto con browser integrato (navigazione in-app).
+    Perché: consultare i risultati web senza uscire dall’applicazione.
+
+  • Finestre About e Release info con testo leggibile su tema scuro Windows.
+    Perché: colori espliciti su sfondo bianco; prima il testo era bianco su bianco.
+
+  • Messaggi di errore login più chiari (database vs servizio generico).
+    Perché: «Servizio temporaneamente non disponibile» non spiegava la causa.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (7)
+--------------------------------------------------------------------------------
+
+  • Sync clienti EasyOne: paginazione corretta (fino a tutta l’anagrafica).
+    Perché: prima si importava spesso solo la prima pagina (~100 clienti).
+
+  • Scheda Clienti: elenco completo dall’archivio locale (non più max 500).
+    Perché: molti clienti sincronizzati non comparivano in tabella.
+
+  • Effetto hover sulle schede principali (Cruscotto, Clienti, Maxy, ecc.).
+    Perché: capire subito su quale sezione si sta passando con il mouse.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (8)
+--------------------------------------------------------------------------------
+
+  • Calendario EasyOne caricato automaticamente all’apertura della scheda.
+    Perché: usare il login Maxy senza dover cliccare «Collega EasyOne».
+
+  • Agenda unificata con tutti gli appuntamenti (90 giorni indietro, 180 avanti).
+    Perché: vedere l’intero calendario CRM, non solo la settimana corrente.
+
+  • Outlook e altro account EasyOne restano opzionali per calendari personali.
+    Perché: chi vuole può collegare il proprio account Microsoft o EasyOne.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (9)
+--------------------------------------------------------------------------------
+
+  • Nuova scheda «Chat interna» per messaggi tra colleghi Maxy AI.
+    Perché: comunicazione rapida nel team senza uscire dall’applicazione.
+
+  • Canale Generale con storico persistente su database locale e aggiornamento
+    automatico ogni pochi secondi.
+    Perché: vedere i messaggi degli altri utenti collegati in tempo quasi reale.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (10)
+--------------------------------------------------------------------------------
+
+  • Selettore tema in Sistema → Tema: sistema, chiaro, scuro, Classic, BigMac.
+    Perché: personalizzare l’aspetto dell’app e adattarla alle preferenze utente.
+
+  • Classic: bianco, blu e grigi Mac System (Gruaro).
+  • BigMac: pane dorato, ketchup, lattuga e formaggio (tema divertente).
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (13)
+--------------------------------------------------------------------------------
+
+  • Corretto login Integration Hub nel bundle PyInstaller: AuthenticationError
+    restituisce 401 invece di errore 500 generico.
+    Perché: la build 12 bloccava l’accesso con «Servizio temporaneamente non
+    disponibile» anche con credenziali valide.
+
+
+--------------------------------------------------------------------------------
+v.2.0 beta — build «daisy» (12)
+--------------------------------------------------------------------------------
+
+  • Bundle installer aggiornato con MacSystem-2.0.1-Dandelion.apk e
+    MacSystem Connect inclusi in resources/software.
+    Perché: garantire download offline e installazione completa senza dipendere
+    da file esterni sul PC di destinazione.
+
+
+ALTRI SOFTWARE MACSYSTEM (build 11)
+  • Nuova scheda «Altri software MacSystem» con download diretto al click.
+    Perché: offrire assistenza remota (MacSystem Connect) e l’app Android senza
+    uscire dall’applicazione.
+
+  • Pulsante «Salva MacSystem Connect sul Desktop» per l’assistenza remota.
+    Perché: installazione rapida del client di supporto con un solo clic.
+
+  • Banner «NOVITÀ: disponibile per Android: MacSystem App» — un clic scarica
+    MacSystem-2.0.1-Dandelion.apk sul Desktop del PC (effetto hover sui pulsanti).
+    Perché: promuovere l’app mobile e permettere il download diretto dell’APK.
+
+  • Link al sito https://www.macsystem.it/homepage per novità e aggiornamenti.
+    Perché: mantenere il collegamento con il portale aziendale.
+
+
+--------------------------------------------------------------------------------
+NOTE PER L’UTILIZZO
+--------------------------------------------------------------------------------
+  • PostgreSQL deve essere attivo sul PC per il servizio Integration Hub locale.
+  • Configurazione Hub: %APPDATA%\MAC AI Assistant\hub.env
+  • Per Maxy commerciale: impostare GEMINI_API_KEY in hub.env
+  • Per supporto tecnico: impostare ANTHROPIC_API_KEY, CHROMA_DIR e percorsi
+    share in hub.env (%APPDATA%\MAC AI Assistant\hub.env)
+  • Dopo l’installazione eseguire «Sincronizza con EasyOne» per popolare i dati.
+
+
+--------------------------------------------------------------------------------
+  Fine documento release — Maxy AI v.2.0 beta (daisy)
+--------------------------------------------------------------------------------
